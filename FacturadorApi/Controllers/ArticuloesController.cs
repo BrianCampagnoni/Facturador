@@ -67,6 +67,13 @@ namespace FacturadorApi.Controllers
             var articulo = _context.Articulo.Find(id);
             if (articulo == null)
                 return BadRequest("No se encontraron Articulos");
+
+            foreach (var factura in _context.Factura_Detalle)
+            {
+                if (factura.Art_ID == id)
+                    return BadRequest("No se puede borrar, Factura Detalle asociada al articulo");
+            }
+
             _context.Articulo.Remove(articulo);
             await _context.SaveChangesAsync();
 

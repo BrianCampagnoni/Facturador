@@ -24,6 +24,9 @@ namespace FacturadorApi.Data
             modelBuilder.Entity<Factura_Cabecera>()
                 .HasKey(fc => new { fc.FC_ID });
 
+            modelBuilder.Entity<Factura_Detalle>()
+                .HasKey(fc => new { fc.FC_DTL_ID });
+
         }
 
 
@@ -31,6 +34,7 @@ namespace FacturadorApi.Data
         public DbSet<Cliente> Cliente{ get; set; } = default!;
         public DbSet<Articulo> Articulo { get; set; } = default!;
         public DbSet<Factura_Cabecera> Factura_Cabecera { get; set; } = default!;
+        public DbSet<Factura_Detalle> Factura_Detalle { get; set; } = default!;
 
 
 

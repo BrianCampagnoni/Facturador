@@ -3,7 +3,7 @@
     public class Factura_Detalle
     {
         public int FC_DTL_ID { get; set; }
-        public DateOnly FechaAlta { get; set; }
+        public DateTime FechaAlta { get; set; }
         public decimal Cant { get; set; }
         public decimal Precio { get; set; }
         public decimal Monto { get; set; }

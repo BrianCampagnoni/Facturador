@@ -74,6 +74,13 @@ namespace FacturadorApi.Controllers
             var Factura_Cabecera = _context.Factura_Cabecera.Find(id);
             if (Factura_Cabecera == null)
                 return BadRequest("No se encontraron Facturas Cabeceras");
+
+            foreach (var factura in _context.Factura_Detalle)
+            {
+                if (factura.Fact_ID == id)
+                    return BadRequest("No se puede borrar, Factura Detalle asociada al factura cabecera");
+            }
+
             _context.Factura_Cabecera.Remove(Factura_Cabecera);
             await _context.SaveChangesAsync();
 
