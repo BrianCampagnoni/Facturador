@@ -63,8 +63,12 @@ namespace FacturadorApi.Controllers
             var cliente = _context.Cliente.Find(id);
             if (cliente == null)
                 return BadRequest("No se encontraron clientes");
-            _context.Cliente.Remove(cliente);
-            await _context.SaveChangesAsync();
+
+            foreach (var factura in _context.Factura_Cabecera)
+            {
+                if(factura.Cli_ID == id)
+                    return BadRequest("No se puede borrar, Factura Cabecera asociada al cliente");
+            }
 
             return Ok(await _context.Cliente.ToListAsync());
         }

@@ -2,7 +2,7 @@
 {
     public class Articulo
     {
-        public int ART_ID { get; set; }
+        public int Art_id { get; set; }
         public string NombreArticulo { get; set; }
         public string Marca { get; set; }
         public string Descripcion { get; set; }
