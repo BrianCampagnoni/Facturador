@@ -17,8 +17,19 @@ namespace FacturadorApi.Data
         {
             modelBuilder.Entity<Cliente>()
                 .HasKey(c => new { c.Cli_ID});
+
+            modelBuilder.Entity<Articulo>()
+                .HasKey(a => new { a.Art_id });
         }
 
-        public DbSet<FacturadorApi.Model.Cliente> Cliente{ get; set; } = default!;
+
+
+        public DbSet<Cliente> Cliente{ get; set; } = default!;
+        public DbSet<Articulo> Articulo { get; set; } = default!;
+
+
+
+
+
     }
 }
