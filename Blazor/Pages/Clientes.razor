@@ -7,8 +7,6 @@
 @inject ClientesService clientesService
 
 <h1>Clientes</h1>
-@*
-<p>This component demonstrates fetching data from a service.</p>*@
 
 @if (clientes == null)
 {
@@ -126,6 +124,7 @@ else
 
         ClearFields();
         await load();
+        mode = MODE.None;
 
     }
 
