@@ -1,0 +1,155 @@
+﻿
+@page "/articulos"
+@using Blazor.Data
+
+<PageTitle>Articulos</PageTitle>
+
+@inject ArticulosService articulosService
+
+<h1>Articulos</h1>
+
+@if (articulos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button onclick="@Add" class="btn btn-success">Add</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Art_id</th>
+                <th>NombreArticulo</th>
+                <th>Marca</th>
+                <th>Descripcion</th>
+                <th>Editar</th>
+                <th>Borrar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var articulo in articulos)
+            {
+                <tr>
+                    <td>@articulo.Art_id</td>
+                    <td>@articulo.NombreArticulo</td>
+                    <td>@articulo.Marca</td>
+                    <td>@articulo.Descripcion</td>
+                     <td>
+                        <button class="btn btn-success" @onclick="@(() => Edit(articulo))"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(articulo.Art_id))"> Delete </button>
+                    </td>
+                </tr>                
+            }
+        </tbody>
+    </table>
+}
+
+@if (articulos != null && mode == MODE.Add)
+{
+
+    <EditForm Model="@articulos" OnInvalidSubmit="@Insert">
+        <div>
+            <strong>Art_id: </strong>            
+            <InputNumber @bind-Value="nuevoArticulo.Art_id"></InputNumber> <br />   
+        </div>
+        <div>
+            <strong>NombreArticulo: </strong>            
+            <InputText @bind-Value="nuevoArticulo.NombreArticulo"></InputText><br />     
+        </div>
+        <div>
+            <strong>Marca: </strong>            
+            <InputText @bind-Value="nuevoArticulo.Marca"></InputText><br />   
+        </div>
+        <div>
+            <strong>Descripcion: </strong>            
+            <InputText @bind-Value="nuevoArticulo.Descripcion"></InputText><br />   
+        </div>
+        
+        <button onclick="@Insert" class="btn btn-success" > Ok </button>
+    </EditForm>
+
+}
+
+
+@code {
+    Articulo[] articulos;
+
+    private enum MODE { None, Add, EditDelete }
+    MODE mode = MODE.None;
+
+    Articulo nuevoArticulo= new Articulo()
+    {
+            NombreArticulo = string.Empty,
+            Marca = string.Empty,
+            Descripcion = string.Empty
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    public async Task load()
+    {
+        articulos = await articulosService.GetAsync();
+    }
+
+    protected void ClearFields()
+    {
+        nuevoArticulo = new Articulo()
+        {
+            NombreArticulo = string.Empty,
+            Marca = string.Empty,
+            Descripcion = string.Empty
+        };
+    }
+
+    protected async Task Insert()
+    {      
+        if (nuevoArticulo.Art_id == 0)
+        {
+            await articulosService.InsertAsync(nuevoArticulo);
+        }
+        else
+        {
+            await articulosService.UpdateAsync(nuevoArticulo);
+        }
+
+        ClearFields();
+        await load();
+        mode = MODE.None;
+
+    }
+
+    protected void Add()
+    {
+        ClearFields();
+        mode = MODE.Add;
+    }
+
+    protected void Edit(Articulo edit)
+    {
+        ClearFields();
+        
+        nuevoArticulo = new Articulo()
+        {
+            Art_id = edit.Art_id,
+            NombreArticulo = edit.NombreArticulo,
+            Marca = edit.Marca,
+            Descripcion = edit.Descripcion,
+        };
+
+        mode = MODE.Add;
+    }
+
+    protected async Task Delete(int id)
+    {
+        await articulosService.DeleteAsync(id);
+        ClearFields();
+        await load();
+        mode = MODE.None;
+    }
+
+}

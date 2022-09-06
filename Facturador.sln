@@ -5,7 +5,18 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FacturadorApi", "FacturadorApi\FacturadorApi.csproj", "{5D9DFB51-3FD2-420D-BFF1-ACC4DC5CED68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor", "Blazor\Blazor.csproj", "{4E1386B6-82BB-4A13-B01B-83EC4D028A04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor", "Blazor\Blazor.csproj", "{4E1386B6-82BB-4A13-B01B-83EC4D028A04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataBase", "DataBase", "{72E390C2-E672-4F2C-8999-16466B031576}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Create Data Base.sql = Scripts\Create Data Base.sql
+		Scripts\Create Tables.sql = Scripts\Create Tables.sql
+		Scripts\FacturasCabeceraDetallePorClientes.sql = Scripts\FacturasCabeceraDetallePorClientes.sql
+		Scripts\FacturasPorClientesMasVendido.sql = Scripts\FacturasPorClientesMasVendido.sql
+		Scripts\Inserts y Selects de referencia.sql = Scripts\Inserts y Selects de referencia.sql
+		Scripts\View1.sql = Scripts\View1.sql
+		Scripts\View2.sql = Scripts\View2.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

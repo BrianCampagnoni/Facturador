@@ -9,6 +9,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ClientesService>();
+builder.Services.AddSingleton<ArticulosService>();
+builder.Services.AddSingleton<Factura_CabeceraService>();
+builder.Services.AddSingleton<Factura_DetalleService>();
 
 var app = builder.Build();
 

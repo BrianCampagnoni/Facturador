@@ -1,0 +1,156 @@
+﻿
+@page "/facturaCabecera"
+@using Blazor.Data
+
+<PageTitle>Facturas Cabecera</PageTitle>
+
+@inject Factura_CabeceraService Service
+
+<h1>Facturas</h1>
+
+@if (facturas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button onclick="@Add" class="btn btn-success">Add</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>FC_ID</th>
+                <th>Estado</th>
+                <th>FechaAlta</th>
+                <th>Cli_ID</th>
+                <th>Editar</th>
+                <th>Borrar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var factura in facturas)
+            {
+                <tr>
+                    <td>@factura.FC_ID</td>
+                    <td>@factura.Estado</td>
+                    <td>@factura.FechaAlta</td>
+                    <td>@factura.Cli_ID</td>
+                     <td>
+                        <button class="btn btn-success" @onclick="@(() => Edit(factura))"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(factura.FC_ID))"> Delete </button>
+                    </td>
+                </tr>                
+            }
+        </tbody>
+    </table>
+}
+
+@if (facturas != null && mode == MODE.Add)
+{
+
+    <EditForm Model="@facturas" OnInvalidSubmit="@Insert">
+        <div>
+            <strong>FC_ID: </strong>            
+            <InputNumber @bind-Value="nuevo.FC_ID"></InputNumber> <br />   
+        </div>
+        <div>
+            <strong>Estado: </strong>           
+            <InputText @bind-Value="nuevo.Estado"></InputText><br />
+        </div>
+        <div>
+            <strong>FechaAlta: </strong>            
+            <InputDate @bind-Value="nuevo.FechaAlta"></InputDate><br />   
+        </div>
+        <div>
+            <strong>Cli_ID: </strong>            
+            <InputNumber @bind-Value="nuevo.Cli_ID"></InputNumber><br />   
+        </div>    
+        <button onclick="@Insert" class="btn btn-success" > Ok </button>
+    </EditForm>
+
+}
+
+@code {
+    Factura_Cabecera[] facturas;
+
+    private enum MODE { None, Add, EditDelete }
+    MODE mode = MODE.None;
+
+    Factura_Cabecera nuevo = new Factura_Cabecera()
+    {
+            FC_ID = 0,
+            Estado = string.Empty,
+            FechaAlta = DateTime.Now,
+            Cli_ID = 0
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    public async Task load()
+    {
+        facturas = await Service.GetAsync();
+    }
+
+    protected void ClearFields()
+    {
+        nuevo = new Factura_Cabecera()
+        {
+            FC_ID = 0,
+            Estado = string.Empty,
+            FechaAlta = DateTime.Now,
+            Cli_ID = 0
+        };
+    }
+
+    protected async Task Insert()
+    {      
+        if (nuevo.FC_ID == 0)
+        {
+            await Service.InsertAsync(nuevo);
+        }
+        else
+        {
+            await Service.UpdateAsync(nuevo);
+        }
+
+        ClearFields();
+        await load();
+        
+        mode = MODE.None;
+
+    }
+
+    protected void Add()
+    {
+        ClearFields();
+        mode = MODE.Add;
+    }
+
+    protected void Edit(Factura_Cabecera edit)
+    {
+        ClearFields();
+        
+        nuevo= new Factura_Cabecera()
+        {
+            FC_ID = edit.FC_ID,
+            Estado = edit.Estado,
+            FechaAlta = edit.FechaAlta,
+            Cli_ID = edit.Cli_ID
+        };
+
+        mode = MODE.Add;
+    }
+
+    protected async Task Delete(int id)
+    {
+        await Service.DeleteAsync(id);
+        ClearFields();
+        await load();
+        mode = MODE.None;
+    }
+
+}

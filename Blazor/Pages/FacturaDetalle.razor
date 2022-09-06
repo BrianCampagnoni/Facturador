@@ -1,0 +1,184 @@
+﻿
+@page "/facturaDetalle"
+@using Blazor.Data
+
+<PageTitle>Factura Detalle</PageTitle>
+
+@inject Factura_DetalleService Service
+
+<h1>Facturas</h1>
+
+@if (facturas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button onclick="@Add" class="btn btn-success">Add</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>FC_DTL_ID</th>
+                <th>FechaAlta</th>
+                <th>Cant</th>
+                <th>Precio</th>
+                <th>Monto</th>
+                <th>Fact_ID</th>
+                <th>Art_ID</th>
+                <th>Editar</th>
+                <th>Borrar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var factura in facturas)
+            {
+                <tr>
+                    <td>@factura.FC_DTL_ID</td>
+                    <td>@factura.FechaAlta</td>
+                    <td>@factura.Cant</td>
+                    <td>@factura.Precio</td>
+                    <td>@factura.Monto</td>
+                    <td>@factura.Fact_ID</td>
+                    <td>@factura.Art_ID</td>
+                     <td>
+                        <button class="btn btn-success" @onclick="@(() => Edit(factura))"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(factura.FC_DTL_ID))"> Delete </button>
+                    </td>
+                </tr>                
+            }
+        </tbody>
+    </table>
+}
+
+@if (facturas != null && mode == MODE.Add)
+{
+
+    <EditForm Model="@facturas" OnInvalidSubmit="@Insert">
+        <div>
+            <strong>FC_DTL_ID: </strong>            
+            <InputNumber @bind-Value="nuevo.FC_DTL_ID"></InputNumber> <br />   
+        </div>
+        <div>
+            <strong>FechaAlta: </strong>           
+            <InputDate @bind-Value="nuevo.FechaAlta"></InputDate><br />
+        </div>
+        <div>
+            <strong>Cant: </strong>            
+            <InputNumber @bind-Value="nuevo.Cant"></InputNumber><br />   
+        </div>
+        <div>
+            <strong>Precio: </strong>            
+            <InputNumber @bind-Value="nuevo.Precio"></InputNumber><br />   
+        </div>
+         <div>
+            <strong>Monto: </strong>            
+            <InputNumber @bind-Value="nuevo.Monto"></InputNumber> <br />   
+        </div>
+        <div>
+            <strong>Fact_ID: </strong>            
+            <InputNumber @bind-Value="nuevo.Fact_ID"></InputNumber><br />     
+        </div>
+        <div>
+            <strong>Art_ID: </strong>            
+            <InputNumber @bind-Value="nuevo.Art_ID"></InputNumber><br />   
+        </div>
+        <button onclick="@Insert" class="btn btn-success" > Ok </button>
+    </EditForm>
+
+}
+
+
+@code {
+    Factura_Detalle[] facturas;
+
+    private enum MODE { None, Add, EditDelete }
+    MODE mode = MODE.None;
+
+    Factura_Detalle nuevo = new Factura_Detalle()
+    {
+            FC_DTL_ID = 0,
+            FechaAlta = DateTime.Now,
+            Cant = 0,
+            Precio = 0,
+            Monto = 0,
+            Fact_ID = 0,            
+            Art_ID = 0
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    public async Task load()
+    {
+        facturas = await Service.GetAsync();
+    }
+
+    protected void ClearFields()
+    {
+        nuevo = new Factura_Detalle()
+        {
+            FC_DTL_ID = 0,
+            FechaAlta = DateTime.Now,
+            Cant = 0,
+            Precio = 0,
+            Monto = 0,
+            Fact_ID = 0,            
+            Art_ID = 0
+        };
+    }
+
+    protected async Task Insert()
+    {      
+        if (nuevo.FC_DTL_ID == 0)
+        {
+            await Service.InsertAsync(nuevo);
+        }
+        else
+        {
+            await Service.UpdateAsync(nuevo);
+        }
+
+        ClearFields();
+        await load();
+        
+        mode = MODE.None;
+
+    }
+
+    protected void Add()
+    {
+        ClearFields();
+        mode = MODE.Add;
+    }
+
+    protected void Edit(Factura_Detalle edit)
+    {
+        ClearFields();
+        
+        nuevo= new Factura_Detalle()
+        {
+            FC_DTL_ID = edit.FC_DTL_ID,
+            FechaAlta = edit.FechaAlta,
+            Cant = edit.Cant,
+            Precio = edit.Precio,
+            Monto = edit.Monto,
+            Fact_ID = edit.Fact_ID,            
+            Art_ID = edit.Art_ID
+        };
+
+        mode = MODE.Add;
+    }
+
+    protected async Task Delete(int id)
+    {
+        await Service.DeleteAsync(id);
+        ClearFields();
+        await load();
+        mode = MODE.None;
+    }
+
+}
