@@ -69,6 +69,8 @@ namespace FacturadorApi.Controllers
                 if(factura.Cli_ID == id)
                     return BadRequest("No se puede borrar, Factura Cabecera asociada al cliente");
             }
+            _context.Cliente.Remove(cliente);
+            await _context.SaveChangesAsync();
 
             return Ok(await _context.Cliente.ToListAsync());
         }

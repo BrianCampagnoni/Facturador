@@ -36,7 +36,7 @@ namespace Blazor.Data
 
         }
 
-        public async Task<HttpResponseMessage> DeleteClienteAsync(string id)
+        public async Task<HttpResponseMessage> DeleteClienteAsync(int id)
         {
             var http = new HttpClient();
             return await http.DeleteAsync($"{baseUrl}api/cliente/{id}");
