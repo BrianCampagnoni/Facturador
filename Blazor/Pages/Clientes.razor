@@ -1,0 +1,53 @@
+﻿@page "/clientes"
+@using Blazor.Data
+
+
+<PageTitle>Clientes</PageTitle>
+
+@inject ClientesService clientesService
+
+<h1>Clientes</h1>
+@*
+<p>This component demonstrates fetching data from a service.</p>*@
+
+@if (clientes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cli_ID</th>
+                <th>RazonSocial</th>
+                <th>CUIT</th>
+                <th>Direccion</th>
+                <th>Deshabilitado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in clientes)
+            {
+                <tr>
+                    <td>@cliente.Cli_ID</td>
+                    <td>@cliente.RazonSocial</td>
+                    <td>@cliente.CUIT</td>
+                    <td>@cliente.Direccion</td>
+                    <td>@cliente.Deshabilitado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Cliente[] clientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await clientesService.GetClienteAsync();
+    }
+
+
+}
