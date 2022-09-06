@@ -16,6 +16,7 @@
 }
 else
 {
+    <button onclick="@Add" class="btn btn-success">Add</button>
     <table class="table">
         <thead>
             <tr>
@@ -24,6 +25,8 @@ else
                 <th>CUIT</th>
                 <th>Direccion</th>
                 <th>Deshabilitado</th>
+                <th>Editar</th>
+                <th>Borrar</th>
             </tr>
         </thead>
         <tbody>
@@ -35,19 +38,125 @@ else
                     <td>@cliente.CUIT</td>
                     <td>@cliente.Direccion</td>
                     <td>@cliente.Deshabilitado</td>
-                </tr>
+                     <td>
+                        <button class="btn btn-success" @onclick="@(() => Edit(cliente))"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(cliente.Cli_ID))"> Delete </button>
+                    </td>
+                </tr>                
             }
         </tbody>
     </table>
 }
 
+@if (clientes != null && mode == MODE.Add)
+{
+
+    <EditForm Model="@clientes" OnInvalidSubmit="@Insert">
+        <div>
+            <strong>Cli_ID: </strong>            
+            <InputNumber @bind-Value="nuevoCliente.Cli_ID"></InputNumber> <br />   
+        </div>
+        <div>
+            <strong>Razon Social: </strong>            
+            <InputText @bind-Value="nuevoCliente.RazonSocial"></InputText><br />     
+        </div>
+        <div>
+            <strong>CUIT: </strong>            
+            <InputText @bind-Value="nuevoCliente.CUIT"></InputText><br />   
+        </div>
+        <div>
+            <strong>Direccion: </strong>            
+            <InputText @bind-Value="nuevoCliente.Direccion"></InputText><br />   
+        </div>
+        <div>
+            <strong>Deshabilitado: </strong>            
+            <InputCheckbox @bind-Value="nuevoCliente.Deshabilitado"></InputCheckbox><br />         
+        </div>
+        
+        <button onclick="@Insert" class="btn btn-success" > Clear </button>
+    </EditForm>
+
+}
+
 @code {
     Cliente[] clientes;
 
+    private enum MODE { None, Add, EditDelete }
+    MODE mode = MODE.None;
+
+    Cliente nuevoCliente = new Cliente()
+    {
+            RazonSocial = string.Empty,
+            CUIT = string.Empty,
+            Direccion = string.Empty
+    };
+
     protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    public async Task load()
     {
         clientes = await clientesService.GetClienteAsync();
     }
 
+    protected void ClearFields()
+    {
+        nuevoCliente = new Cliente()
+        {
+            RazonSocial = string.Empty,
+            CUIT = string.Empty,
+            Direccion = string.Empty
+        };
+    }
+
+    protected async Task Insert()
+    {      
+        if (nuevoCliente.Cli_ID == 0)
+        {
+            await clientesService.InsertClienteAsync(nuevoCliente);
+        }
+        else
+        {
+            await clientesService.UpdateClienteAsync(nuevoCliente);
+        }
+
+        ClearFields();
+        await load();
+
+    }
+
+    protected void Add()
+    {
+        ClearFields();
+        mode = MODE.Add;
+    }
+
+    protected void Edit(Cliente edit)
+    {
+        ClearFields();
+        
+        nuevoCliente = new Cliente()
+        {
+            Cli_ID = edit.Cli_ID,
+            RazonSocial = edit.RazonSocial,
+            CUIT = edit.CUIT,
+            Direccion = edit.Direccion,
+            Deshabilitado = edit.Deshabilitado
+        };
+
+        mode = MODE.Add;
+    }
+
+    protected async Task Delete(int id)
+    {
+        await clientesService.DeleteClienteAsync(id);
+        ClearFields();
+        await load();
+        mode = MODE.None;
+    }
 
 }
